@@ -13,4 +13,4 @@ foreach (string line in File.ReadAllLines("day1.txt")) {
     total2 += Convert.ToInt32($"{newline.First(char.IsDigit)}{newline.Last(char.IsDigit)}");
 }
 Console.WriteLine($"Puzzle 1 answer : Total = {total1}");
-Console.WriteLine($"Puzzle 1 answer : Total = {total2}");
+Console.WriteLine($"Puzzle 2 answer : Total = {total2}");
