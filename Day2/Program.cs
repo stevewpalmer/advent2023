@@ -1,7 +1,7 @@
 ﻿int total1 = 0;
 int total2 = 0;
 int index = 1;
-foreach (string line in File.ReadAllLines("day2.txt")) {
+foreach (string line in File.ReadAllLines("puzzle.txt")) {
 
     string[] game = line.Split(':');
     string[] plays = game[1].Split(';');

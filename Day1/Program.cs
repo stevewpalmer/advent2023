@@ -3,7 +3,7 @@ int total2 = 0;
 
 string [] numbers = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
 
-foreach (string line in File.ReadAllLines("day1.txt")) {
+foreach (string line in File.ReadAllLines("puzzle.txt")) {
 
     string newline = line;
     for (int index = 0; index < numbers.Length; index++) {
