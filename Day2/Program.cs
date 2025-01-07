@@ -1,5 +1,5 @@
-﻿int total1 = 0;
-int total2 = 0;
+﻿int answer1 = 0;
+int answer2 = 0;
 int index = 1;
 foreach (string line in File.ReadAllLines("puzzle.txt")) {
 
@@ -41,11 +41,11 @@ foreach (string line in File.ReadAllLines("puzzle.txt")) {
         }
     }
     if (valid) {
-        total1 += index;
+        answer1 += index;
     }
-    total2 += maxBlue * maxRed * maxGreen;
+    answer2 += maxBlue * maxRed * maxGreen;
     index++;
 }
 
-Console.WriteLine($"Puzzle 1 answer : Total = {total1}");
-Console.WriteLine($"Puzzle 2 answer : Total = {total2}");
+Console.WriteLine($"Part 1 answer : {answer1}");
+Console.WriteLine($"Part 2 answer : {answer2}");
