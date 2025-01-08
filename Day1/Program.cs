@@ -1,7 +1,7 @@
 ﻿int answer1 = 0;
 int answer2 = 0;
 
-string [] numbers = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+string[] numbers = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
 foreach (string line in File.ReadAllLines("puzzle.txt")) {
 

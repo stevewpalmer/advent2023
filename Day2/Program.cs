@@ -13,7 +13,7 @@ foreach (string line in File.ReadAllLines("puzzle.txt")) {
     foreach (string play in plays) {
         IEnumerable<string> gems = play.Split(',').Select(g => g.Trim());
         foreach (string gem in gems) {
-            string [] parts = gem.Split(' ');
+            string[] parts = gem.Split(' ');
             int value = Convert.ToInt32(parts[0]);
             switch (parts[1]) {
                 case "blue": {
