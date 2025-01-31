@@ -50,12 +50,35 @@ Point last = pt;
 List<Point> path = [pt];
 pt = Point.Add(pt, directions[results[0]]);
 do {
+    path.Add(pt);
     results = charToDirection[map[pt.Y][pt.X]];
     Point n1 = Point.Add(pt, directions[results[0]]);
     Point n2 = Point.Add(pt, directions[results[1]]);
     (pt, last) = n1 == last ? (n2, pt) : (n1, pt);
-    path.Add(pt);
 } while (pt != start);
 
+HashSet<Point> outside = new(path);
+for (int y = 0; y < h; y++) {
+    (bool inside, bool up) state = (false, false);
+    for (int x = 0; x < w; x++) {
+        if (path.Contains(new Point(x, y))) {
+            state = map[y][x] switch {
+                '|' => (!state.inside, state.up),
+                'L' => (state.inside, true),
+                'F' => (state.inside, false),
+                'J' => (!state.up ? !state.inside : state.inside, false),
+                '7' => (state.up ? !state.inside : state.inside, false),
+                _ => state
+            };
+        }
+        if (!state.inside) {
+            outside.Add(new Point(x, y));
+        }
+    }
+}
+
 int answer1 = path.Count / 2;
+int answer2 = w * h - outside.Count;
+
 Console.WriteLine($"Part 1 answer: {answer1}");
+Console.WriteLine($"Part 2 answer: {answer2}");
