@@ -2,6 +2,7 @@
 
 char[][] maze = File.ReadAllLines("puzzle.txt").Select(l => l.ToCharArray()).ToArray();
 (int, int)[] directions = [(0, -1), (1, 0), (0, 1), (-1, 0)];
+Dictionary<Point, int> visited = [];
 Point start = Point.Empty;
 
 int h = maze.Length;
@@ -15,21 +16,30 @@ for (int r = 0; r < h; r++) {
     }
 }
 
-Console.WriteLine($"Part 1 answer: {Walk(64)}");
+long answer1 = Walk();
+
+long totalSquares = (26501365 - w / 2) / w;
+
+long even = visited.Values.Count(v => v % 2 == 0);
+long odd = visited.Values.Count(v => v % 2 == 1);
+
+long evenCorners = visited.Values.Count(v => v % 2 == 0 && v > 65);
+long oddCorners = visited.Values.Count(v => v % 2 == 1 && v > 65);
+
+long answer2 = totalSquares * totalSquares * (odd + even) + totalSquares * (2 * odd - oddCorners + evenCorners) + (odd - oddCorners);
+
+Console.WriteLine($"Part 1 answer: {answer1}");
+Console.WriteLine($"Part 2 answer: {answer2}");
 return;
 
-long Walk(int maxSteps) {
+long Walk() {
     Queue<(Point, int)> queue = new();
-    Dictionary<Point, int> visited = [];
     queue.Enqueue((start, 0));
 
     while (queue.TryDequeue(out (Point, int) element)) {
         (Point pt, int steps) = element;
         if (!visited.TryAdd(pt, steps)) {
             continue;
-        }
-        if (steps == maxSteps + 1) {
-            break;
         }
         foreach ((int dx, int dy) d in directions) {
             Point step = new(pt.X + d.dx, pt.Y + d.dy);
@@ -38,6 +48,5 @@ long Walk(int maxSteps) {
             }
         }
     }
-    return visited.Values.Count(v => v % 2 == 0);
+    return visited.Values.Count(v => v < 65 && v % 2 == 0);
 }
-
