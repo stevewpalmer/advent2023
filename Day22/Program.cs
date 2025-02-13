@@ -1,44 +1,62 @@
 ﻿using System.Drawing;
-using Block = (int index, int x, int y, int z, int height, System.Drawing.Rectangle rect);
+using Block = (int z, int height, System.Drawing.Rectangle rect);
 
 List<Block> blocks = [];
-List<Block> bases = [];
-Dictionary<int, List<int>> supportedBy = [];
-Dictionary<int, List<int>> supports = [];
+Dictionary<int, HashSet<int>> supportedBy = [];
+Dictionary<int, HashSet<int>> supports = [];
 
-int blockIndex = 0;
 foreach (string input in File.ReadAllLines("puzzle.txt")) {
     string[] parts = input.Split('~');
     int[] c1 = parts[0].Split(',').Select(int.Parse).ToArray();
     int[] c2 = parts[1].Split(',').Select(int.Parse).ToArray();
     Rectangle rect = new(c1[0], c1[1], c2[0] - c1[0] + 1, c2[1] - c1[1] + 1);
-    blocks.Add((blockIndex, c1[0], c1[1], c1[2], c2[2] - c1[2] + 1, rect));
-    blockIndex++;
+    blocks.Add((c1[2], c2[2] - c1[2] + 1, rect));
 }
 
-foreach (Block b in blocks.OrderBy(b => b.z)) {
+blocks.Sort((a, b) => a.z.CompareTo(b.z));
+
+for (int c = 0; c < blocks.Count; c++) {
     int maxZ = 1;
-    foreach (Block nb in bases.OrderByDescending(nb => nb.z + nb.height)) {
-        if (nb.rect.IntersectsWith(b.rect)) {
-            int nbTop = nb.z + nb.height;
-            if (nbTop < maxZ) {
-                continue;
+    HashSet<int> blockSupportedBy = [];
+    for (int d = c - 1; d >= 0; d--) {
+        if (blocks[d].rect.IntersectsWith(blocks[c].rect)) {
+            int nbTop = blocks[d].z + blocks[d].height;
+            if (nbTop > maxZ) {
+                blockSupportedBy = [d];
+                maxZ = nbTop;
             }
-            maxZ = nbTop;
-            if (!supportedBy.ContainsKey(b.index)) {
-                supportedBy[b.index] = [];
+            if (nbTop == maxZ) {
+                blockSupportedBy.Add(d);
             }
-            supportedBy[b.index].Add(nb.index);
-            if (!supports.ContainsKey(nb.index)) {
-                supports[nb.index] = [];
-            }
-            supports[nb.index].Add(b.index);
         }
     }
-    bases.Add((b.index, b.x, b.y, maxZ, b.height, b.rect));
+    foreach (int d in blockSupportedBy) {
+        if (!supports.ContainsKey(d)) {
+            supports[d] = [];
+        }
+        supports[d].Add(c);
+        if (!supportedBy.ContainsKey(c)) {
+            supportedBy[c] = [];
+        }
+        supportedBy[c].Add(d);
+    }
+    blocks[c] = (maxZ, blocks[c].height, blocks[c].rect);
 }
+
 long answer1 = 0;
-for (int c = 0; c < blockIndex; c++) {
-    answer1 += supports.TryGetValue(c, out List<int>? support) && support.Any(d => supportedBy[d].Count == 1) ? 0 : 1;
+long answer2 = 0;
+for (int c = 0; c < blocks.Count; c++) {
+    if (!(supports.ContainsKey(c) && supports[c].Any(d => supportedBy[d].Count == 1))) {
+        answer1++;
+    }
+    HashSet<int> chain = [c];
+    for (int d = c + 1; d < blocks.Count; d++) {
+        if (supportedBy.ContainsKey(d) && supportedBy[d].IsSubsetOf(chain)) {
+            chain.Add(d);
+        }
+    }
+    answer2 += chain.Count - 1;
 }
+
 Console.WriteLine($"Part 1 answer: {answer1}");
+Console.WriteLine($"Part 2 answer: {answer2}");
